@@ -1,0 +1,18 @@
+{
+  "url": "https://exemple-seedbox.com/rutorrent",
+  "username": "votre-identifiant",
+  "password": "votre-mot-de-passe",
+  "verify_ssl": true,
+  "timeout": 60,
+  "last_dir": "",
+  "last_label": "",
+  "start_torrents": true,
+  "favorite_dirs": [],
+  "favorite_labels": [],
+  "auto_refresh": true,
+  "clear_after_upload": false,
+  "watch_downloads": false,
+  "watch_folder": "",
+  "watch_auto_send": false,
+  "watch_interval": 3
+}

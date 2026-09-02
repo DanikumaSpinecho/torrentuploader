@@ -1,0 +1,3 @@
+# Facultatif : active le glisser-deposer DANS la fenetre de l'application.
+# Sans ce paquet, tout fonctionne (bouton "Ajouter..." + depot sur le .bat).
+tkinterdnd2>=0.4.2
