@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Torrent Uploader — options</title>
+  <style>
+    body { font-family: "Segoe UI", system-ui, sans-serif; margin: 24px; max-width: 640px;
+           color: #1c2733; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    p.sub { color: #5a6b7b; margin: 0 0 20px; }
+    fieldset { border: 1px solid #d7dee5; border-radius: 6px; padding: 14px 16px;
+               margin: 0 0 16px; }
+    legend { font-weight: 600; padding: 0 6px; }
+    label { display: block; margin: 10px 0 4px; font-size: 13px; }
+    input[type=text], input[type=number] { width: 100%; padding: 7px 9px; font-size: 14px;
+      border: 1px solid #c3ccd6; border-radius: 4px; box-sizing: border-box;
+      font-family: ui-monospace, Consolas, monospace; }
+    input[type=number] { width: 120px; }
+    .row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+    button { padding: 7px 14px; font-size: 14px; border-radius: 4px;
+             border: 1px solid #c3ccd6; background: #f5f7f9; cursor: pointer; }
+    button.primary { background: #0b5fa5; color: #fff; border-color: #0b5fa5; }
+    .hint { color: #5a6b7b; font-size: 12px; margin-top: 6px; line-height: 1.5; }
+    #status { margin-top: 12px; font-size: 13px; min-height: 20px; }
+    .ok { color: #0a7a3f; } .err { color: #b00020; }
+    code { background: #eef2f6; padding: 1px 5px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Torrent Uploader</h1>
+  <p class="sub">Relais entre Chrome et l'application locale.</p>
+
+  <fieldset>
+    <legend>Connexion à l'application</legend>
+    <label for="token">Jeton de sécurité</label>
+    <input type="text" id="token" placeholder="collez ici le jeton affiché par l'application">
+    <div class="hint">
+      Dans l'application : bouton <strong>« Intégration Chrome… »</strong> → section 3 →
+      <strong>Copier</strong>. Sans ce jeton, l'application refuse toutes les requêtes.
+    </div>
+
+    <label for="port">Port du service local</label>
+    <input type="number" id="port" min="1024" max="65535">
+    <div class="hint">Ne changez cette valeur que si vous avez modifié <code>IPC_PORT</code>.</div>
+
+    <div class="row">
+      <button class="primary" id="save">Enregistrer</button>
+      <button id="test">Tester la connexion</button>
+    </div>
+    <div id="status"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Capture automatique</legend>
+    <div class="row">
+      <input type="checkbox" id="autoCapture">
+      <label for="autoCapture" style="margin:0">
+        Intercepter les téléchargements de .torrent sans les enregistrer sur le disque
+      </label>
+    </div>
+    <div class="hint">
+      Nécessite l'accès aux sites visités, afin de lire le fichier avec vos cookies
+      de connexion — indispensable sur un tracker privé, où la seedbox seule
+      recevrait une page d'erreur.<br>
+      <strong>À savoir :</strong> le fichier est demandé une seconde fois au site.
+      Sur un tracker qui n'autorise qu'un seul téléchargement par jeton, préférez le
+      clic droit ou la surveillance de dossier.
+    </div>
+    <div class="row">
+      <button id="grant">Autoriser l'accès aux sites</button>
+      <span id="permState" class="hint"></span>
+    </div>
+  </fieldset>
+
+  <script src="options.js"></script>
+</body>
+</html>

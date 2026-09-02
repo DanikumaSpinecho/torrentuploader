@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Torrent Uploader - envoi vers la seedbox",
+  "version": "1.0.0",
+  "description": "Envoie les liens .torrent et magnet vers l'application Torrent Uploader (seedbox ruTorrent).",
+  "permissions": ["downloads", "contextMenus", "storage", "notifications"],
+  "host_permissions": ["http://127.0.0.1/*", "http://localhost/*"],
+  "optional_host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "sw.js",
+    "type": "module"
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "action": {
+    "default_title": "Torrent Uploader",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  }
+}
