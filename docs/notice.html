@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Torrent Uploader 2 — Notice de fonctionnement et d'utilisation</title>
+<style>
+  :root {
+    --text: #18212f; --muted: #5b6678; --accent: #2563eb; --soft: #eef3fd; --border: #d8dee8;
+    --ok: #0f7b45; --warn: #a15c00; --code: #f2f4f8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; color: var(--text); background: #fff;
+    font: 11pt/1.55 "Segoe UI", system-ui, sans-serif;
+  }
+  .page { max-width: 820px; margin: 0 auto; padding: 32px 36px 60px; }
+  .cover {
+    background: #111c33; color: #fff; padding: 46px 36px 40px; margin: -32px -36px 30px;
+    display: flex; gap: 22px; align-items: center;
+  }
+  .cover img { width: 84px; height: 84px; }
+  .cover h1 { margin: 0; font-size: 26pt; font-weight: 600; letter-spacing: -.01em; }
+  .cover p { margin: 4px 0 0; color: #a8b3c8; font-size: 12pt; }
+  h2 {
+    font-size: 16pt; font-weight: 600; margin: 34px 0 10px; padding-bottom: 6px;
+    border-bottom: 2px solid var(--accent); page-break-after: avoid;
+  }
+  h3 { font-size: 12.5pt; font-weight: 600; margin: 22px 0 6px; page-break-after: avoid; }
+  p, li { margin: 6px 0; }
+  ul, ol { padding-left: 22px; }
+  code, kbd {
+    font: 9.5pt ui-monospace, Consolas, monospace; background: var(--code);
+    padding: 1px 5px; border-radius: 4px; border: 1px solid #e3e7ee;
+  }
+  kbd { font-family: "Segoe UI", sans-serif; font-size: 9.5pt; }
+  figure { margin: 16px 0 20px; text-align: center; page-break-inside: avoid; }
+  figure img {
+    max-width: 100%; border: 1px solid var(--border); border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(17, 28, 51, .10);
+  }
+  figure.narrow img { max-width: 52%; }
+  figcaption { color: var(--muted); font-size: 9.5pt; margin-top: 6px; }
+  .note, .warn, .tip {
+    border-left: 4px solid var(--accent); background: var(--soft); padding: 10px 14px;
+    border-radius: 0 6px 6px 0; margin: 14px 0; page-break-inside: avoid;
+  }
+  .warn { border-color: var(--warn); background: #fdf6ec; }
+  .tip { border-color: var(--ok); background: #edf8f2; }
+  .note strong:first-child, .warn strong:first-child, .tip strong:first-child { display: block; margin-bottom: 2px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0 16px; font-size: 10pt; page-break-inside: avoid; }
+  th, td { border: 1px solid var(--border); padding: 6px 9px; text-align: left; vertical-align: top; }
+  th { background: var(--code); font-weight: 600; }
+  .steps { counter-reset: step; list-style: none; padding-left: 0; }
+  .steps > li { counter-increment: step; position: relative; padding-left: 38px; margin: 10px 0; }
+  .steps > li::before {
+    content: counter(step); position: absolute; left: 0; top: 0; width: 26px; height: 26px;
+    border-radius: 50%; background: var(--accent); color: #fff; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; font-size: 10pt;
+  }
+  .toc { columns: 2; column-gap: 30px; padding-left: 18px; }
+  .toc li { margin: 3px 0; break-inside: avoid; }
+  a { color: var(--accent); text-decoration: none; }
+  .small { color: var(--muted); font-size: 9.5pt; }
+  @media print {
+    .page { padding: 0 6mm; max-width: none; }
+    .cover { margin: 0 -6mm 24px; }
+    h2 { page-break-before: auto; }
+    a { color: var(--text); }
+  }
+  @page { size: A4; margin: 16mm 14mm 16mm; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="cover">
+  <img src="images/icone.png" alt="">
+  <div>
+    <h1>Torrent Uploader 2</h1>
+    <p>Notice de fonctionnement et d'utilisation</p>
+  </div>
+</div>
+
+<p><strong>Torrent Uploader</strong> envoie vos fichiers <code>.torrent</code> et vos liens
+<strong>magnet</strong> vers une seedbox <strong>ruTorrent / rTorrent</strong>, en choisissant à
+chaque fois le dossier de destination et l'étiquette. Les torrents peuvent arriver de trois façons :</p>
+<ul>
+  <li><strong>depuis Windows</strong> : double-clic sur un <code>.torrent</code>, clic sur un lien magnet,
+    glisser-déposer sur l'application ou sur son raccourci ;</li>
+  <li><strong>depuis le navigateur</strong> (Chrome ou Edge, avec l'extension fournie) : un
+    <code>.torrent</code> téléchargé part automatiquement vers l'application, et un clic droit sur un
+    lien propose « Envoyer vers la seedbox » ;</li>
+  <li><strong>à la main</strong> : bouton « Ajouter », ou <kbd>Ctrl</kbd> + <kbd>V</kbd> pour coller un lien.</li>
+</ul>
+
+<h3>Sommaire</h3>
+<ol class="toc">
+  <li><a href="#installation">Installation</a></li>
+  <li><a href="#premier">Premier lancement</a></li>
+  <li><a href="#utilisation">Utilisation au quotidien</a></li>
+  <li><a href="#windows">Intégration à Windows</a></li>
+  <li><a href="#extension">Extension Chrome et Edge</a></li>
+  <li><a href="#surveille">Dossier surveillé</a></li>
+  <li><a href="#parametres">Paramètres</a></li>
+  <li><a href="#donnees">Données et sécurité</a></li>
+  <li><a href="#v1">Mise à jour depuis la version 1</a></li>
+  <li><a href="#desinstaller">Désinstallation</a></li>
+  <li><a href="#depannage">Dépannage</a></li>
+  <li><a href="#technique">Fonctionnement technique</a></li>
+</ol>
+
+<!-- ===================================================================== -->
+<h2 id="installation">1. Installation</h2>
+
+<h3>Ce qu'il faut</h3>
+<ul>
+  <li><strong>Windows 10 ou 11.</strong></li>
+  <li><strong>Python 3.8 ou plus récent</strong>, installé depuis
+    <a href="https://www.python.org/downloads/">python.org</a>. Gardez les options proposées par défaut
+    (elles installent <code>pythonw.exe</code> et l'association des fichiers <code>.pyw</code>).</li>
+  <li>Une seedbox <strong>ruTorrent</strong> : son adresse, votre identifiant et votre mot de passe.</li>
+  <li>Facultatif : <strong>Google Chrome</strong> ou <strong>Microsoft Edge</strong>, pour l'extension.</li>
+</ul>
+<div class="warn"><strong>Attention à la version « Microsoft Store » de Python</strong>
+Si la commande <code>python</code> ouvre le Microsoft Store, Python n'est pas réellement installé :
+installez-le depuis python.org. L'application refuse d'ailleurs de s'enregistrer auprès de Windows
+avec ce faux Python.</div>
+
+<h3>Mise en place</h3>
+<ol class="steps">
+  <li>Copiez le dossier <strong>« Torrent Uploader »</strong> à l'endroit de votre choix, par exemple
+    dans <code>Documents</code>. Il n'y a rien d'autre à installer.</li>
+  <li>Copiez aussi le dossier <strong>« Extension Chrome »</strong> si vous comptez utiliser
+    l'extension, à un emplacement où il restera : le navigateur le lit en permanence.</li>
+  <li>Facultatif : pour pouvoir <strong>glisser-déposer directement dans la fenêtre</strong>, ouvrez une
+    invite de commandes et tapez <code>pip install tkinterdnd2</code>. Sans ce module, tout le reste
+    fonctionne (bouton « Ajouter », raccourci, collage, navigateur).</li>
+</ol>
+
+<!-- ===================================================================== -->
+<h2 id="premier">2. Premier lancement</h2>
+<p>Double-cliquez sur <strong>« Torrent Uploader.pyw »</strong> (ou sur
+<strong>« Torrent Uploader.bat »</strong>). Au tout premier lancement, la fenêtre des paramètres
+s'ouvre d'elle-même :</p>
+
+<figure><img src="images/parametres.png" style="max-width:72%" alt="">
+  <figcaption>Paramètres de la seedbox</figcaption></figure>
+
+<ol class="steps">
+  <li><strong>Adresse de ruTorrent</strong> : l'adresse que vous ouvrez dans votre navigateur, par exemple
+    <code>https://maseedbox.com/rutorrent</code>. Vous pouvez la coller telle quelle, même terminée par
+    <code>/php/addtorrent.php</code>.</li>
+  <li><strong>Identifiant</strong> et <strong>mot de passe</strong> de l'interface web.</li>
+  <li>Cliquez sur <strong>« Tester la connexion »</strong> : le nombre de torrents, d'étiquettes et de
+    dossiers trouvés s'affiche.</li>
+  <li><strong>« Enregistrer »</strong>.</li>
+</ol>
+<div class="tip"><strong>Conseil</strong>
+Ouvrez ensuite <strong>Intégration</strong> et cliquez sur <strong>Activer</strong> (voir
+<a href="#windows">§4</a>) : c'est ce qui permet d'ouvrir les <code>.torrent</code> et les liens magnet
+d'un simple clic, et à l'extension du navigateur de fonctionner.</div>
+
+<!-- ===================================================================== -->
+<h2 id="utilisation">3. Utilisation au quotidien</h2>
+
+<figure><img src="images/principale-clair.png" alt="">
+  <figcaption>La fenêtre principale : file d'attente, destination, envoi</figcaption></figure>
+
+<h3>Ajouter des torrents</h3>
+<table>
+  <tr><th>Comment</th><th>Ce qui se passe</th></tr>
+  <tr><td>Cliquer sur la zone en pointillés, ou « Ajouter »</td><td>Choix de fichiers <code>.torrent</code> (plusieurs à la fois possible).</td></tr>
+  <tr><td>Glisser-déposer des fichiers ou un dossier</td><td>Sur la fenêtre (avec <code>tkinterdnd2</code>), sur le raccourci du Bureau ou sur <code>Torrent Uploader.bat</code>. Un dossier apporte tous les <code>.torrent</code> qu'il contient.</td></tr>
+  <tr><td><kbd>Ctrl</kbd> + <kbd>V</kbd> ou « Coller un lien »</td><td>Ajoute les liens magnet, les adresses de <code>.torrent</code> et les chemins de fichiers présents dans le presse-papiers.</td></tr>
+  <tr><td>Double-clic sur un <code>.torrent</code>, clic sur un lien magnet</td><td>Une fois l'intégration Windows activée.</td></tr>
+  <tr><td>Depuis le navigateur</td><td>Avec l'extension : téléchargement d'un <code>.torrent</code>, ou clic droit sur un lien.</td></tr>
+</table>
+<p>Un même torrent n'entre qu'une fois dans la liste, même s'il arrive une fois comme fichier et une
+fois comme lien magnet : l'application compare leurs empreintes. Si l'application est déjà ouverte,
+tout nouvel arrivage rejoint la fenêtre existante, qui passe au premier plan.</p>
+
+<h3>Choisir la destination</h3>
+<ul>
+  <li><strong>Dossier</strong> et <strong>Étiquette</strong> proposent ce qui est réellement utilisé sur
+    la seedbox, relu au démarrage et par <strong>Actualiser</strong> (<kbd>F5</kbd>). Vous pouvez aussi
+    saisir une valeur nouvelle.</li>
+  <li>L'<strong>étoile</strong> ★ à droite met la valeur en <strong>favori</strong> : elle restera en
+    tête de liste.</li>
+  <li>Dossier laissé vide : le torrent va dans le dossier par défaut de rTorrent.</li>
+  <li>Les listes restent affichées même si la seedbox ne répond pas (avec la date du dernier relevé).</li>
+</ul>
+
+<h3>Envoyer</h3>
+<p>Cliquez sur <strong>« Envoyer vers la seedbox »</strong> (ou <kbd>Ctrl</kbd> + <kbd>Entrée</kbd>).
+Chaque ligne indique son <strong>état</strong> ; un double-clic sur une ligne affiche le détail
+complet.</p>
+<table>
+  <tr><th>État</th><th>Signification</th></tr>
+  <tr><td style="color:#0f7b45">Ajouté (confirmé)</td><td>L'application a vérifié que le torrent figure bien sur la seedbox.</td></tr>
+  <tr><td style="color:#0f7b45">Ajouté (confirmé malgré une erreur passagère)</td><td>La seedbox a répondu par une erreur, mais le torrent est bien arrivé.</td></tr>
+  <tr><td style="color:#0f7b45">Ajouté (après réparation du cache ruTorrent)</td><td>ruTorrent était bloqué ; l'application l'a remis d'aplomb puis a renvoyé le torrent (voir <a href="#depannage">§11</a>).</td></tr>
+  <tr><td style="color:#0f7b45">Envoyé (non confirmé)</td><td>Accepté par la seedbox, sans vérification possible (adresse <code>http</code> sans empreinte connue, ou seedbox lente).</td></tr>
+  <tr><td style="color:#c42b1c">Échec : …</td><td>Le motif est indiqué. « Réessayez dans un instant » signale un incident passager.</td></tr>
+</table>
+<p>Options sous la destination : <strong>« Démarrer le torrent immédiatement »</strong> (sinon il est
+ajouté à l'arrêt) et <strong>« Vider la liste après un envoi réussi »</strong>.</p>
+
+<h3>Raccourcis clavier</h3>
+<table>
+  <tr><td><kbd>Ctrl</kbd> + <kbd>V</kbd></td><td>Coller des liens</td>
+      <td><kbd>Suppr</kbd></td><td>Retirer les lignes sélectionnées</td></tr>
+  <tr><td><kbd>F5</kbd></td><td>Actualiser étiquettes et dossiers</td>
+      <td><kbd>Ctrl</kbd> + <kbd>Entrée</kbd></td><td>Envoyer</td></tr>
+</table>
+
+<!-- ===================================================================== -->
+<h2 id="windows">4. Intégration à Windows</h2>
+<p>Bouton <strong>Intégration</strong> dans le bandeau, puis <strong>Activer</strong>.</p>
+
+<figure><img src="images/integration.png" style="max-width:74%" alt="">
+  <figcaption>La fenêtre « Intégration Windows et navigateur »</figcaption></figure>
+
+<p>Une fois activée :</p>
+<ul>
+  <li>un double-clic sur un fichier <code>.torrent</code> l'ajoute à la file ;</li>
+  <li>un clic sur un lien <code>magnet:</code> dans le navigateur ouvre l'application (le navigateur
+    demande une confirmation la première fois : cochez « Toujours autoriser ») ;</li>
+  <li>l'extension du navigateur peut joindre l'application, et la lancer si elle est fermée ;</li>
+  <li>l'application apparaît dans le menu « Ouvrir avec » et dans les « Applications par défaut ».</li>
+</ul>
+<p><strong>Raccourci sur le Bureau</strong> crée une icône « Torrent Uploader » sur laquelle vous
+pouvez déposer des <code>.torrent</code>.</p>
+<div class="note"><strong>Aucun droit administrateur</strong>
+Tout est enregistré dans votre seul profil Windows, et <strong>Désactiver</strong> retire exactement ce
+qui a été ajouté — sans toucher à ce qu'un autre programme aurait enregistré.</div>
+<div class="note"><strong>Un autre client torrent est installé ?</strong>
+L'application ne lui prend jamais sa place d'office : elle s'ajoute au menu « Ouvrir avec ». Pour la
+choisir par défaut, cliquez sur <strong>« Applications par défaut… »</strong> : Windows exige que ce
+choix soit fait par vous.</div>
+<p>Si vous déplacez le dossier de l'application ou réinstallez Python, relancez simplement
+l'application une fois : l'intégration se met à jour toute seule (ou cliquez sur
+<strong>Mettre à jour</strong>).</p>
+
+<!-- ===================================================================== -->
+<h2 id="extension">5. Extension Chrome et Edge</h2>
+<p>L'extension fait parvenir à l'application les torrents rencontrés dans le navigateur :</p>
+<ul>
+  <li><strong>capture automatique</strong> — dès qu'un téléchargement de <code>.torrent</code> se
+    termine, l'application l'ajoute à sa file, où que vous l'ayez enregistré ;</li>
+  <li><strong>clic droit</strong> sur un lien magnet ou <code>.torrent</code> →
+    « Envoyer vers la seedbox (Torrent Uploader) ». Sur un tracker privé, le fichier est lu avec votre
+    session ouverte sur le site.</li>
+</ul>
+<p>Elle ne demande <strong>aucun réglage</strong> : elle trouve l'application d'elle-même, et la
+<strong>lance si elle est fermée</strong>.</p>
+
+<h3>Installation dans Chrome</h3>
+<ol class="steps">
+  <li>Dans l'application : <strong>Intégration → Activer</strong>. C'est indispensable : c'est ce qui
+    déclare à Chrome le relais vers l'application.</li>
+  <li>Dans Chrome, ouvrez l'adresse <code>chrome://extensions</code>.</li>
+  <li>En haut à droite, activez <strong>« Mode développeur »</strong>.</li>
+  <li>Cliquez sur <strong>« Charger l'extension non empaquetée »</strong> et choisissez le dossier
+    <strong>« Extension Chrome »</strong> (celui qui contient <code>manifest.json</code>).</li>
+  <li>Cliquez sur l'icône des extensions (pièce de puzzle) puis sur l'épingle à côté de
+    « Torrent Uploader » pour garder son icône visible.</li>
+  <li>Cliquez sur cette icône : un <strong>point vert</strong> confirme que tout est prêt.</li>
+</ol>
+<p><strong>Edge</strong> : même démarche à l'adresse <code>edge://extensions</code> — « Mode
+développeur » se trouve en bas à gauche, puis « Charger l'extension décompressée ».</p>
+
+<figure><img src="images/extension-fenetre.png" style="max-width:34%" alt="">
+  <figcaption>La fenêtre de l'extension : état de la liaison et réglages courants</figcaption></figure>
+
+<div class="warn"><strong>Ne déplacez pas le dossier de l'extension</strong>
+Le navigateur la lit depuis ce dossier. Pour la déplacer : retirez-la de <code>chrome://extensions</code>,
+déplacez le dossier, puis chargez-la de nouveau. Elle n'est pas publiée sur le Chrome Web Store,
+d'où le passage par le mode développeur ; Chrome peut vous rappeler de temps en temps que des
+extensions de ce type sont actives.</div>
+
+<h3>Réglages de l'extension</h3>
+<p>Dans sa fenêtre, ou dans ses options (clic droit sur l'icône → « Options ») :</p>
+<table>
+  <tr><th>Réglage</th><th>Effet</th></tr>
+  <tr><td>Envoyer les .torrent téléchargés</td><td>Capture automatique (activée par défaut). Désactivée, seul le clic droit envoie.</td></tr>
+  <tr><td>Supprimer ensuite le fichier téléchargé</td><td>Le <code>.torrent</code> quitte votre dossier de téléchargement et l'historique ; l'application en garde une copie jusqu'à l'envoi.</td></tr>
+  <tr><td>Afficher une notification</td><td>Sans notification, le résultat reste visible sur l'icône (✓ vert ou ! rouge).</td></tr>
+  <tr><td>Connexion manuelle</td><td>Secours, si la liaison automatique est impossible : jeton et port à recopier depuis l'application (Intégration → Connexion manuelle). L'application doit alors être ouverte.</td></tr>
+</table>
+
+<figure><img src="images/extension-options.png" style="max-width:64%" alt="">
+  <figcaption>Les options de l'extension</figcaption></figure>
+
+<div class="note"><strong>Envoi immédiat</strong>
+Par défaut, les torrents reçus du navigateur attendent dans la file que vous cliquiez sur
+« Envoyer ». Pour qu'ils partent aussitôt, cochez dans l'application <strong>Intégration →
+« Envoyer aussitôt à la seedbox tout torrent reçu automatiquement »</strong> : le dossier et
+l'étiquette affichés dans la fenêtre principale sont alors utilisés.</div>
+
+<!-- ===================================================================== -->
+<h2 id="surveille">6. Dossier surveillé (facultatif)</h2>
+<p>Dans <strong>Intégration</strong>, l'application peut surveiller un dossier (par défaut
+Téléchargements) et importer chaque nouveau <code>.torrent</code> qui y apparaît. C'est utile avec un
+autre navigateur que Chrome ou Edge ; avec l'extension, c'est inutile.</p>
+<ul>
+  <li>Les fichiers déjà présents au démarrage sont ignorés : seules les nouveautés comptent.</li>
+  <li>Un téléchargement en cours (<code>.crdownload</code>) n'est pris qu'une fois complet.</li>
+  <li>Une page d'erreur enregistrée sous un nom en <code>.torrent</code> est écartée.</li>
+</ul>
+
+<!-- ===================================================================== -->
+<h2 id="parametres">7. Paramètres</h2>
+<table>
+  <tr><th>Réglage</th><th>Usage</th></tr>
+  <tr><td>Vérifier le certificat SSL</td><td>À décocher uniquement pour une seedbox à certificat auto-signé.</td></tr>
+  <tr><td>Délai réseau</td><td>Temps d'attente maximal d'une réponse de la seedbox (60 s par défaut).</td></tr>
+  <tr><td>Lire les étiquettes et les dossiers au démarrage</td><td>Sinon, utilisez « Actualiser ».</td></tr>
+  <tr><td>Apparence</td><td>Automatique (suit le thème de Windows), clair ou sombre.</td></tr>
+</table>
+
+<figure><img src="images/principale-sombre.png" style="max-width:80%" alt="">
+  <figcaption>L'apparence sombre</figcaption></figure>
+
+<!-- ===================================================================== -->
+<h2 id="donnees">8. Données et sécurité</h2>
+<p>Vos réglages sont rangés dans votre profil Windows, et non à côté du programme : le dossier de
+l'application peut ainsi être copié, partagé ou remplacé sans jamais emporter un mot de passe.</p>
+<p>Emplacement : <code>%APPDATA%\TorrentUploader</code> (collez cette adresse dans la barre de
+l'Explorateur).</p>
+<table>
+  <tr><th>Fichier</th><th>Contenu</th></tr>
+  <tr><td><code>config.json</code></td><td>Réglages, adresse et identifiants de la seedbox, favoris, dernières listes lues.</td></tr>
+  <tr><td><code>ipc_token.txt</code></td><td>Clé du service local (créée automatiquement).</td></tr>
+  <tr><td><code>erreurs.log</code></td><td>Journal des incidents, utile en cas de problème.</td></tr>
+  <tr><td><code>recus\</code></td><td>Copies de <code>.torrent</code> reçus du navigateur, supprimées après envoi (ou au bout d'une semaine).</td></tr>
+  <tr><td><code>native-host\</code></td><td>Relais utilisé par l'extension du navigateur.</td></tr>
+</table>
+<div class="warn"><strong>Mot de passe</strong>
+Il est enregistré en clair dans <code>config.json</code>, protégé par les droits de votre session
+Windows. Ne partagez pas ce fichier.</div>
+<p>L'application écoute sur la boucle locale (<code>127.0.0.1</code>, port 38471) pour ne garder qu'une
+seule fenêtre ouverte et recevoir les envois. Ce service est inaccessible depuis le réseau, refuse
+toute requête sans sa clé, et une page web ne peut ni le piloter ni lire ses réponses. Le relais de
+l'extension, lui, n'est utilisable que par l'extension déclarée.</p>
+
+<!-- ===================================================================== -->
+<h2 id="v1">9. Mise à jour depuis la version 1</h2>
+<ul>
+  <li><strong>Vos réglages sont repris automatiquement</strong> si la version 2 remplace la version 1
+    dans le même dossier : au premier lancement, l'ancien <code>config.json</code> est déplacé dans
+    votre profil (§8). Sinon, copiez-le vous-même dans <code>%APPDATA%\TorrentUploader</code>.</li>
+  <li><strong>L'intégration Windows se met à jour seule</strong> si elle était activée : la liaison avec
+    l'extension est ajoutée au passage.</li>
+  <li><strong>L'extension doit être remplacée</strong> : retirez l'ancienne de
+    <code>chrome://extensions</code>, puis chargez la nouvelle (§5). Elle n'a plus besoin du jeton.</li>
+  <li>Les anciens fichiers <code>Activer l'integration Windows.bat</code>,
+    <code>Desactiver l'integration Windows.bat</code> et <code>windows_integration.py</code> n'existent
+    plus : tout passe par le bouton <strong>Intégration</strong>.</li>
+</ul>
+
+<!-- ===================================================================== -->
+<h2 id="desinstaller">10. Désinstallation</h2>
+<ol class="steps">
+  <li>Dans l'application : <strong>Intégration → Désactiver</strong>.</li>
+  <li>Dans <code>chrome://extensions</code> : <strong>Supprimer</strong> l'extension.</li>
+  <li>Supprimez le dossier de l'application et celui de l'extension, ainsi que le raccourci du Bureau.</li>
+  <li>Pour effacer aussi vos réglages : supprimez le dossier <code>%APPDATA%\TorrentUploader</code>.</li>
+</ol>
+
+<!-- ===================================================================== -->
+<h2 id="depannage">11. Dépannage</h2>
+<table>
+  <tr><th>Symptôme</th><th>Cause probable et solution</th></tr>
+  <tr><td>« Authentification refusée (HTTP 401) »</td><td>Identifiant ou mot de passe incorrect.</td></tr>
+  <tr><td>« Page introuvable (HTTP 404) »</td><td>L'adresse ne pointe pas sur ruTorrent : vérifiez-la dans un navigateur.</td></tr>
+  <tr><td>« Erreur SSL »</td><td>Certificat auto-signé : décochez « Vérifier le certificat SSL ».</td></tr>
+  <tr><td>« Erreur interne de la seedbox (HTTP 500) »</td><td>rTorrent est momentanément occupé ou redémarre. L'application réessaie seule (après 15 s, 30 s, 1 min, 2 min, 5 min) et garde les listes déjà connues.</td></tr>
+  <tr><td>Les envois échouent en série alors que ruTorrent marche dans le navigateur</td><td>Défaut connu de ruTorrent (versions antérieures à 5.3.13) : son cache interne se corrompt si une page se charge pendant un redémarrage de rTorrent. L'application le répare toute seule et renvoie le torrent. Vous pouvez aussi recharger ruTorrent dans le navigateur.</td></tr>
+  <tr><td>Dossiers ou étiquettes absents des listes</td><td>Cliquez sur « Actualiser » (<kbd>F5</kbd>). Les listes ne montrent que ce qui est utilisé par au moins un torrent ; saisissez librement une autre valeur, et mettez-la en favori ★.</td></tr>
+  <tr><td>L'icône de l'extension indique « Liaison non activée »</td><td>Activez l'intégration dans l'application (§4), puis rouvrez la fenêtre de l'extension.</td></tr>
+  <tr><td>Un <code>.torrent</code> téléchargé n'arrive pas dans l'application</td><td>Vérifiez dans la fenêtre de l'extension que « Envoyer les .torrent téléchargés » est coché. Le nom du fichier doit se terminer par <code>.torrent</code>.</td></tr>
+  <tr><td>Rien ne se passe au double-clic sur un <code>.torrent</code></td><td>Intégration → Mettre à jour. Si un autre client torrent est prioritaire, utilisez « Ouvrir avec » ou « Applications par défaut… ».</td></tr>
+  <tr><td>« Le service local n'a pas pu démarrer (port 38471 occupé) »</td><td>Un autre programme utilise ce port. Le port se change dans <code>config.json</code> (clé <code>ipc_port</code>) ; l'extension s'adapte d'elle-même.</td></tr>
+  <tr><td>L'application ne s'ouvre pas</td><td>Lancez <code>Torrent Uploader.bat</code> : il signale un Python absent ou inutilisable. Une erreur au démarrage s'affiche dans une fenêtre, et son détail est écrit dans <code>%APPDATA%\TorrentUploader\erreurs.log</code>.</td></tr>
+</table>
+
+<!-- ===================================================================== -->
+<h2 id="technique">12. Fonctionnement technique</h2>
+<ul>
+  <li><strong>Envoi</strong> : <code>php/addtorrent.php</code> de ruTorrent (fichier en
+    <code>multipart/form-data</code>, lien magnet ou adresse en champ <code>url</code>), avec le
+    dossier (<code>dir_edit</code>) et l'étiquette (<code>label</code>).</li>
+  <li><strong>Lecture des listes</strong> : requête XML-RPC directe à rTorrent via le plugin
+    <code>httprpc</code> (quatre champs par torrent), insensible au cache de ruTorrent ; repli sur
+    <code>mode=list</code> si nécessaire.</li>
+  <li><strong>Confirmation</strong> : l'empreinte du torrent (SHA-1 de sa section <code>info</code>, ou
+    celle du lien magnet) est recherchée sur la seedbox.</li>
+  <li><strong>Navigateur</strong> : l'extension s'adresse à un hôte de messagerie native (relais Python
+    lancé par le navigateur), qui transmet à l'application ou la démarre.</li>
+</ul>
+
+<h3>Ligne de commande</h3>
+<table>
+  <tr><td><code>python torrent_uploader.py fichier.torrent "magnet:?…"</code></td><td>Ouvre l'application avec ces éléments dans la file</td></tr>
+  <tr><td><code>python torrent_uploader.py --register</code> / <code>--unregister</code></td><td>Active / retire l'intégration</td></tr>
+  <tr><td><code>python torrent_uploader.py --status</code></td><td>Affiche l'état de l'intégration</td></tr>
+  <tr><td><code>python torrent_uploader.py --version</code></td><td>Affiche la version</td></tr>
+</table>
+
+<p class="small" style="margin-top:30px">Torrent Uploader 2.0.0 — notice générée avec l'application.</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Torrent Uploader</title>
+  <link rel="stylesheet" href="ui.css">
+  <style>body { width: 340px; }</style>
+</head>
+<body>
+  <header>
+    <img src="icons/icon48.png" alt="">
+    <div>
+      <h1>Torrent Uploader</h1>
+      <div class="sub">Envoi vers la seedbox</div>
+    </div>
+  </header>
+  <main>
+    <div class="card">
+      <div class="status">
+        <div class="dot" id="dot"></div>
+        <div>
+          <strong id="state">Vérification…</strong>
+          <span id="detail"></span>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="open">Ouvrir Torrent Uploader</button>
+      </div>
+      <div class="msg" id="last"></div>
+    </div>
+
+    <div class="card">
+      <label class="switch">
+        <input type="checkbox" id="autoCapture">
+        <span>Envoyer les .torrent téléchargés
+          <small>Dès qu'un téléchargement de .torrent se termine, il part vers l'application.</small>
+        </span>
+      </label>
+      <label class="switch">
+        <input type="checkbox" id="removeAfterImport">
+        <span>Supprimer ensuite le fichier téléchargé
+          <small>L'application en garde une copie jusqu'à l'envoi à la seedbox.</small>
+        </span>
+      </label>
+    </div>
+
+    <div class="hint">
+      Clic droit sur un lien : « Envoyer vers la seedbox ».
+      <a href="#" id="options" style="float:right">Options</a>
+    </div>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

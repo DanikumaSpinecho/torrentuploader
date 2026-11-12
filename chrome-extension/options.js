@@ -1,75 +1,70 @@
-const DEFAULTS = { port: 38471, token: "", autoCapture: false };
+// Page d'options : comportement de la capture et connexion manuelle de secours.
 
+const DEFAULTS = { autoCapture: true, removeAfterImport: false, notify: true, token: "", port: 38471 };
+const TOGGLES = ["autoCapture", "removeAfterImport", "notify"];
 const $ = (id) => document.getElementById(id);
-const statusEl = $("status");
 
-function say(text, cls) {
-  statusEl.textContent = text;
-  statusEl.className = cls || "";
+function show(level, state, detail) {
+  $("dot").className = "dot " + level;
+  $("state").textContent = state;
+  $("detail").textContent = detail || "";
+}
+
+async function diagnose() {
+  show("", "Vérification…", "");
+  let report;
+  try {
+    report = await chrome.runtime.sendMessage({ type: "diagnose" });
+  } catch (_) {
+    return show("err", "Extension en erreur", "Rechargez l'extension depuis chrome://extensions.");
+  }
+  const { native, http } = report || {};
+  if (native && native.ok) {
+    return show("ok", "Liaison automatique active",
+      native.running
+        ? `Torrent Uploader ${native.version || ""} est ouvert.`
+        : "L'application est fermée : elle se lancera toute seule au premier envoi.");
+  }
+  if (http && http.ok) {
+    return show("ok", "Connexion manuelle active", "L'application répond avec le jeton saisi.");
+  }
+  if (http && http.status === 403) {
+    return show("err", "Jeton refusé", "Recopiez le jeton affiché par l'application.");
+  }
+  if (http) {
+    return show("warn", "Application fermée",
+      "Connexion manuelle : ouvrez Torrent Uploader. La liaison automatique n'est pas activée ("
+      + ((native && native.error) || "hôte introuvable") + ").");
+  }
+  show("err", "Liaison non activée",
+    "Activez l'intégration dans l'application (détail : " + ((native && native.error) || "hôte introuvable") + ").");
 }
 
 async function load() {
   const cfg = await chrome.storage.local.get(DEFAULTS);
+  for (const key of TOGGLES) {
+    $(key).checked = !!cfg[key];
+    $(key).addEventListener("change", () => chrome.storage.local.set({ [key]: $(key).checked }));
+  }
   $("token").value = cfg.token || "";
   $("port").value = cfg.port || DEFAULTS.port;
-  $("autoCapture").checked = !!cfg.autoCapture;
-  refreshPermState();
+  $("test").addEventListener("click", diagnose);
+  $("save").addEventListener("click", save);
+  diagnose();
 }
 
-async function refreshPermState() {
-  const granted = await chrome.permissions.contains({ origins: ["<all_urls>"] });
-  $("permState").textContent = granted
-    ? "Accès accordé."
-    : "Accès non accordé — la capture automatique restera inactive.";
-  $("grant").disabled = granted;
-}
-
-$("save").addEventListener("click", async () => {
+async function save() {
   const port = parseInt($("port").value, 10);
+  const message = $("saved");
   if (!Number.isInteger(port) || port < 1024 || port > 65535) {
-    say("Port invalide.", "err");
+    message.textContent = "Port invalide (1024 à 65535).";
+    message.className = "msg err";
     return;
   }
-  const token = $("token").value.trim();
-  if (!token) {
-    say("Le jeton est obligatoire.", "err");
-    return;
-  }
-  await chrome.storage.local.set({
-    token,
-    port,
-    autoCapture: $("autoCapture").checked,
-  });
-  say("Enregistré.", "ok");
-});
-
-$("test").addEventListener("click", async () => {
-  say("Test en cours…");
-  const resp = await chrome.runtime.sendMessage({ type: "ping" });
-  if (resp && resp.ok) {
-    say(`Connecté à ${resp.data.app} ${resp.data.version}.`, "ok");
-  } else if (resp && resp.status === 403) {
-    say("Jeton refusé par l'application.", "err");
-  } else {
-    say(
-      "Application injoignable : " +
-        ((resp && (resp.error || "HTTP " + resp.status)) || "sans réponse") +
-        ". Vérifiez qu'elle est ouverte.",
-      "err"
-    );
-  }
-});
-
-$("grant").addEventListener("click", async () => {
-  // Doit partir d'un geste de l'utilisateur, sinon Chrome refuse la demande.
-  const granted = await chrome.permissions.request({ origins: ["<all_urls>"] });
-  say(granted ? "Accès accordé." : "Accès refusé.", granted ? "ok" : "err");
-  refreshPermState();
-});
-
-$("autoCapture").addEventListener("change", async () => {
-  await chrome.storage.local.set({ autoCapture: $("autoCapture").checked });
-  if ($("autoCapture").checked) refreshPermState();
-});
+  await chrome.storage.local.set({ token: $("token").value.trim(), port });
+  message.textContent = "Enregistré.";
+  message.className = "msg ok";
+  diagnose();
+}
 
 load();

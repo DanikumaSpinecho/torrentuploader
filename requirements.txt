@@ -1,3 +1,4 @@
-# Facultatif : active le glisser-deposer DANS la fenetre de l'application.
-# Sans ce paquet, tout fonctionne (bouton "Ajouter..." + depot sur le .bat).
+# Aucune dépendance obligatoire : l'application n'utilise que la bibliothèque standard.
+#
+# Facultatif : glisser-déposer des fichiers directement dans la fenêtre.
 tkinterdnd2>=0.4.2

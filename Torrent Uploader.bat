@@ -1,6 +1,6 @@
 @echo off
-rem Glissez-deposez un ou plusieurs fichiers .torrent sur ce fichier (ou sur un
-rem raccourci vers ce fichier place sur le Bureau) pour les envoyer a la seedbox.
+rem Lanceur de Torrent Uploader.
+rem Double-cliquez, ou deposez des fichiers .torrent (ou un dossier) sur ce fichier.
 setlocal
 set "SCRIPT=%~dp0torrent_uploader.py"
 
@@ -9,10 +9,14 @@ if %errorlevel%==0 (
     start "" pythonw "%SCRIPT%" %*
     goto :eof
 )
-where python >nul 2>&1
+where pyw >nul 2>&1
 if %errorlevel%==0 (
-    start "" python "%SCRIPT%" %*
+    start "" pyw -3 "%SCRIPT%" %*
     goto :eof
 )
-echo Python est introuvable dans le PATH. Installez Python 3 depuis https://www.python.org/
+echo.
+echo   Python est introuvable.
+echo   Installez Python 3 depuis https://www.python.org/downloads/
+echo   (la version du Microsoft Store ne convient pas).
+echo.
 pause

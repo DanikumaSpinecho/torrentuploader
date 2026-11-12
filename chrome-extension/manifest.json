@@ -1,27 +1,42 @@
 {
   "manifest_version": 3,
-  "name": "Torrent Uploader - envoi vers la seedbox",
-  "version": "1.0.0",
-  "description": "Envoie les liens .torrent et magnet vers l'application Torrent Uploader (seedbox ruTorrent).",
-  "permissions": ["downloads", "contextMenus", "storage", "notifications"],
-  "host_permissions": ["http://127.0.0.1/*", "http://localhost/*"],
-  "optional_host_permissions": ["<all_urls>"],
+  "name": "Torrent Uploader — envoi vers la seedbox",
+  "short_name": "Torrent Uploader",
+  "version": "2.0.0",
+  "description": "Envoie les .torrent téléchargés et les liens magnet vers l'application Torrent Uploader (seedbox ruTorrent).",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjJFPqrWouCjcK56I/6szbSznQkktTYWwy9kJj9H1gD0VPGGKaQgYyIfKWXoMyRqKcfIoDEA8hZ8Gz4fnkpOGWENl2iAKWqwLbjrCVPe4w/1xuQQXtt/IajD4keAl4doASTdjej9X3DWR1Iepyb4LfWCOb/DJLKIj73/JZ0xp+5w8GdUUgyuK0wrhc2Ce7s3nfS1+5V6RsZ0Qq2yx5Mt8pujFuCSF86OBp700bcSAbpd7fP4rS0ROis1nxFy0tz9tYNr1o5i57KUE3389VJIsmiU2PnBR10jqyvH3rYuPJhKEnSwne+zUJKI0xsKDBnZypXrhGzorupr+O0XOjEYzRwIDAQAB",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "contextMenus",
+    "downloads",
+    "storage",
+    "notifications",
+    "nativeMessaging",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1/*",
+    "http://localhost/*"
+  ],
   "background": {
     "service_worker": "sw.js",
     "type": "module"
   },
-  "options_page": "options.html",
-  "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
-  },
   "action": {
     "default_title": "Torrent Uploader",
+    "default_popup": "popup.html",
     "default_icon": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
     }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   }
 }

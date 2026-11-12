@@ -1,0 +1,61 @@
+/* Styles communs à la fenêtre de l'extension et à la page d'options. */
+:root {
+  --bg: #f2f4f8; --card: #ffffff; --border: #d8dee8; --text: #18212f; --muted: #667085;
+  --accent: #2563eb; --accent-hover: #1d4fd8; --on-accent: #ffffff; --soft: #e8effd;
+  --ok: #0f7b45; --warn: #a15c00; --err: #c42b1c; --idle: #98a2b3; --header: #111c33;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #11151c; --card: #1a2029; --border: #2b3442; --text: #e7ebf2; --muted: #98a4b8;
+    --accent: #4f8bf5; --accent-hover: #6a9df7; --on-accent: #0a1222; --soft: #1c2b48;
+    --ok: #4cc38a; --warn: #e3a84c; --err: #f2766e; --idle: #6b778b; --header: #0b0f15;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 13px/1.45 "Segoe UI", system-ui, sans-serif;
+}
+header {
+  background: var(--header); color: #fff; padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+header img { width: 28px; height: 28px; }
+header h1 { font-size: 15px; font-weight: 600; margin: 0; }
+header .sub { font-size: 11.5px; color: #a8b3c8; }
+main { padding: 12px 14px 14px; }
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 10px;
+}
+.card h2 { font-size: 13px; font-weight: 600; margin: 0 0 8px; }
+.status { display: flex; align-items: flex-start; gap: 9px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--idle); margin-top: 5px; flex: none; }
+.dot.ok { background: var(--ok); } .dot.warn { background: var(--warn); } .dot.err { background: var(--err); }
+.status strong { display: block; font-weight: 600; }
+.hint, .status span { color: var(--muted); font-size: 12px; }
+label.switch { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; cursor: pointer; }
+label.switch input { margin: 2px 0 0; width: 16px; height: 16px; accent-color: var(--accent); flex: none; }
+label.switch small { display: block; color: var(--muted); font-size: 11.5px; }
+button {
+  font: inherit; padding: 7px 13px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--card); color: var(--text);
+}
+button:hover { background: var(--soft); }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+button.primary:hover { background: var(--accent-hover); }
+button:disabled { opacity: .55; cursor: default; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+input[type=text], input[type=number] {
+  width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--card); color: var(--text); font: 12.5px ui-monospace, Consolas, monospace;
+}
+input[type=number] { width: 110px; }
+label.field { display: block; font-size: 12px; margin: 10px 0 4px; }
+code { background: var(--soft); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+.msg { min-height: 18px; font-size: 12px; margin-top: 8px; color: var(--muted); }
+.msg.ok { color: var(--ok); } .msg.err { color: var(--err); }
+ol { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: 12px; }
+ol li { margin: 2px 0; }

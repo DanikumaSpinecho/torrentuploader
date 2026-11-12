@@ -1,0 +1,10 @@
+# Clé privée de l'extension : à conserver précieusement, à ne JAMAIS publier.
+*.pem
+
+# Paquets produits
+*.zip
+*.crx
+
+Thumbs.db
+desktop.ini
+.DS_Store

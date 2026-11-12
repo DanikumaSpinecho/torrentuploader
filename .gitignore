@@ -1,0 +1,32 @@
+# --- Ne JAMAIS publier : contient l'URL, l'identifiant et le mot de passe en clair,
+#     ainsi que les chemins reels de la seedbox. ---
+config.json
+config.json.*
+config.local.json
+# ... mais le modele sans identifiants, lui, doit bien etre publie :
+!config.example.json
+
+# Secret du service local (regenere automatiquement au prochain lancement).
+ipc_token.txt
+ipc_token*
+
+# Journaux : peuvent contenir des chemins, des URL et des messages du serveur.
+*.log
+
+# Sauvegardes d'editeurs
+*.bak
+*.orig
+*~
+
+# Artefacts Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Divers
+*.torrent
+Thumbs.db
+desktop.ini
+.DS_Store
