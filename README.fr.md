@@ -339,3 +339,19 @@ notice PDF et HTML (`docs/notice.html`) et une archive `.zip` de l'ensemble.
 - **service HTTP local** — `127.0.0.1:38471` (clé `ipc_port`), routes `/ping`, `/show`, `/add`,
   jeton obligatoire, en-tête `Host` local exigé, CORS accordé aux seules origines
   `chrome-extension://`.
+
+## Politique de signature du code
+
+Signature de code gratuite fournie par [SignPath.io](https://about.signpath.io/), certificat de la
+[SignPath Foundation](https://signpath.org/).
+
+- Les exécutables publiés sont construits à partir de ce dépôt par GitHub Actions
+  ([`release.yml`](.github/workflows/release.yml)) puis signés via SignPath ; rien n'est construit ni
+  signé sur une machine personnelle.
+- Contributeurs et relecteurs : [DanikumaSpinecho](https://github.com/DanikumaSpinecho)
+- Approbateurs (chaque demande de signature est approuvée à la main) : [DanikumaSpinecho](https://github.com/DanikumaSpinecho)
+
+**Confidentialité.** Ce programme ne transmet aucune information à d'autres systèmes en réseau, sauf
+à la demande expresse de l'utilisateur ou de la personne qui l'installe ou l'exploite. Il ne
+communique qu'avec l'adresse de seedbox que vous configurez, et avec lui-même sur la boucle locale
+(`127.0.0.1`).

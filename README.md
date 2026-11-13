@@ -330,3 +330,18 @@ French) and a `.zip` of everything.
   `ejbkdabahogcncpmabcgmenfmefokgjj` (ID fixed by the public key in its manifest);
 - **local HTTP service** — `127.0.0.1:38471` (`ipc_port` key), routes `/ping`, `/show`, `/add`,
   token required, local `Host` header enforced, CORS granted only to `chrome-extension://` origins.
+
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by
+[SignPath Foundation](https://signpath.org/).
+
+- Release executables are built from this repository by GitHub Actions
+  ([`release.yml`](.github/workflows/release.yml)) and signed through SignPath; nothing is built or
+  signed on a personal machine.
+- Committers and reviewers: [DanikumaSpinecho](https://github.com/DanikumaSpinecho)
+- Approvers (each signing request is approved manually): [DanikumaSpinecho](https://github.com/DanikumaSpinecho)
+
+**Privacy policy.** This program will not transfer any information to other networked systems
+unless specifically requested by the user or the person installing or operating it. It only talks
+to the seedbox address you configure, and to itself on the loopback interface (`127.0.0.1`).

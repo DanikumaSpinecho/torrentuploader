@@ -1,0 +1,114 @@
+# Builds TorrentUploader.exe on GitHub, signs it through SignPath (when configured)
+# and publishes the release.
+#
+#   - push a tag "vX.Y.Z"        -> build, test, sign, publish the release
+#   - "Run workflow" (manual)    -> build, test, sign; artifacts only, no release
+#
+# Signing is enabled once the repository has:
+#   secret   SIGNPATH_API_TOKEN           (SignPath > My profile > API token, CI user)
+#   variable SIGNPATH_ORGANIZATION_ID     (SignPath > Organization > ID)
+# Without them the executable is published unsigned.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write          # create the release
+  actions: read            # SignPath reads the build artifact
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      PYTHONIOENCODING: utf-8
+      SIGNPATH_PROJECT: torrentuploader
+      SIGNPATH_POLICY: release-signing
+      HAS_SIGNPATH: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install build tools
+        run: python -m pip install --upgrade pip pyinstaller
+
+      - name: Unit tests
+        run: python -m unittest discover -s tests -t .
+
+      - name: Build TorrentUploader.exe
+        run: python tools/build_exe.py
+
+      - name: Upload unsigned executable
+        id: unsigned
+        uses: actions/upload-artifact@v4
+        with:
+          name: TorrentUploader-unsigned
+          path: dist/TorrentUploader.exe
+          if-no-files-found: error
+
+      - name: Sign with SignPath
+        if: env.HAS_SIGNPATH == 'true'
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ env.SIGNPATH_PROJECT }}
+          signing-policy-slug: ${{ env.SIGNPATH_POLICY }}
+          artifact-configuration-slug: initial
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+
+      - name: Use signed executable
+        shell: pwsh
+        run: |
+          if (Test-Path signed/TorrentUploader.exe) {
+            Copy-Item signed/TorrentUploader.exe dist/TorrentUploader.exe -Force
+            "SIGNED=true" >> $env:GITHUB_ENV
+            Get-AuthenticodeSignature dist/TorrentUploader.exe | Format-List Status, SignerCertificate
+          } else {
+            "SIGNED=false" >> $env:GITHUB_ENV
+            Write-Warning "SignPath not configured: the executable is NOT signed."
+          }
+
+      - name: Build distribution (manual PDF included)
+        run: python tools/build_dist.py --out "${{ runner.temp }}/dist-folder"
+
+      - name: Collect release files
+        shell: pwsh
+        run: |
+          $v = (python -c "import tuploader; print(tuploader.__version__)").Trim()
+          "VERSION=$v" >> $env:GITHUB_ENV
+          New-Item -ItemType Directory -Force out | Out-Null
+          $d = "${{ runner.temp }}/dist-folder"
+          Copy-Item dist/TorrentUploader.exe out/
+          Compress-Archive -Path chrome-extension/* -DestinationPath "out/TorrentUploader-Extension-$v.zip"
+          Copy-Item "$d/Notice d'utilisation.pdf" "out/Notice-Torrent-Uploader-$v.pdf"
+          Copy-Item "$d/Torrent Uploader $v.zip" "out/TorrentUploader-$v-complet.zip"
+          Get-ChildItem out | Format-Table Name, Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TorrentUploader-release-files
+          path: out/*
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $notes = "docs/release-notes.md"
+          gh release view $tag 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag (Get-ChildItem out/*).FullName --clobber
+          } else {
+            gh release create $tag (Get-ChildItem out/*).FullName --title "Torrent Uploader $env:VERSION" --notes-file $notes
+          }
