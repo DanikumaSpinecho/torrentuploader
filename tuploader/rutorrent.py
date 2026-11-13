@@ -56,6 +56,27 @@ FIELD_BASE_PATH = 25
 _SEEDBOX_LOCK = threading.Lock()
 
 
+class _PreemptiveBasic(urllib.request.BaseHandler):
+    """Envoie Basic d'emblée sur chaque requête vers la seedbox, redirections comprises.
+
+    En en-tête « non redirigé » : si le serveur exige Digest, la relance d'urllib peut
+    le remplacer (un en-tête ordinaire l'emporterait, et la relance bouclerait sans fin).
+    """
+
+    handler_order = 400                   # avant l'envoi effectif
+
+    def __init__(self, client):
+        self.client = client
+        self.host = urllib.parse.urlsplit(client.base_url).netloc.lower()
+
+    def http_request(self, req):
+        if urllib.parse.urlsplit(req.full_url).netloc.lower() == self.host                 and not req.has_header("Authorization"):
+            req.add_unredirected_header("Authorization", self.client._basic_auth())
+        return req
+
+    https_request = http_request
+
+
 class RuTorrentClient:
     def __init__(self, url: str, username: str = "", password: str = "",
                  verify_ssl: bool = True, timeout: int = 60):
@@ -112,6 +133,7 @@ class RuTorrentClient:
             mgr.add_password(None, self.base_url, self.username, self.password)
             handlers.append(urllib.request.HTTPBasicAuthHandler(mgr))
             handlers.append(urllib.request.HTTPDigestAuthHandler(mgr))
+            handlers.append(_PreemptiveBasic(self))
         return urllib.request.build_opener(*handlers)
 
     def _headers(self, extra: dict | None = None) -> dict:
@@ -119,14 +141,15 @@ class RuTorrentClient:
             "User-Agent": "TorrentUploader/%s" % __version__,
             "Accept": "*/*",
         }
-        if self.username:
-            token = base64.b64encode(
-                ("%s:%s" % (self.username, self.password)).encode("utf-8")
-            ).decode("ascii")
-            headers["Authorization"] = "Basic " + token
         if extra:
             headers.update(extra)
         return headers
+
+    def _basic_auth(self) -> str:
+        token = base64.b64encode(
+            ("%s:%s" % (self.username, self.password)).encode("utf-8")
+        ).decode("ascii")
+        return "Basic " + token
 
     def _post(self, endpoint: str, body, content_type: str = "",
               extra: dict | None = None) -> str:
