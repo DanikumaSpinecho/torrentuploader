@@ -413,16 +413,19 @@ class TestInterpreteur(unittest.TestCase):
         self.assertIn("pythonw.exe", fichier.lower())     # pas de fenêtre de console
 
     def test_script_in_command(self):
-        """_script_in_command() rend le 2e élément entre guillemets, sinon une chaîne vide."""
+        """_script_in_command() rend le script (2e élément), ou le .exe autonome seul."""
         self.assertEqual(
             wi._script_in_command(r'"C:\Py\pythonw.exe" "D:\Mes applis\torrent_uploader.py" "%L"'),
             r"D:\Mes applis\torrent_uploader.py")
         self.assertEqual(wi._script_in_command(wi.commands()[0]), wi.script_path())
         self.assertEqual(wi._script_in_command(wi.commands()[1]), wi.script_path())
         self.assertEqual(wi._script_in_command('"a" "b" "c" "d"'), "b")
-        for sans_script in (None, "", r"C:\outil.exe %1", r'"C:\seul.exe"', r'"C:\outil.exe" %1',
+        for sans_script in (None, "", r"C:\outil.exe %1", r'"C:\Py\pythonw.exe" "%1"',
                             'guillemet " orphelin'):
             self.assertEqual(wi._script_in_command(sans_script), "", repr(sans_script))
+        # un .exe seul (hors interpréteur Python) identifie une installation autonome
+        self.assertEqual(wi._script_in_command(r'"C:\seul.exe"'), r"C:\seul.exe")
+        self.assertEqual(wi._script_in_command(r'"C:\outil.exe" %1'), r"C:\outil.exe")
 
     def test_constantes_du_contrat(self):
         """Noms attendus par Windows, par les navigateurs et par l'extension."""

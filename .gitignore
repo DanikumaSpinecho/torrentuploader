@@ -30,3 +30,8 @@ venv/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Exécutable (tools/build_exe.py)
+build/
+dist/
+*.spec

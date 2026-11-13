@@ -24,7 +24,7 @@ from ctypes import wintypes
 from pathlib import Path
 
 from . import APP_NAME
-from .paths import APP_DIR, ASSETS_DIR, ENV_DATA_DIR, is_sandboxed, native_host_dir
+from .paths import APP_DIR, ASSETS_DIR, ENV_DATA_DIR, EXE_PATH, FROZEN, is_sandboxed, native_host_dir
 
 try:
     import winreg
@@ -98,7 +98,9 @@ def _find_python(name: str) -> str:
 
 
 def python_launcher() -> str:
-    """pythonw.exe : lance l'interface sans fenêtre de console."""
+    """pythonw.exe : lance l'interface sans fenêtre de console (le .exe s'il est autonome)."""
+    if FROZEN:
+        return str(EXE_PATH)
     return _find_python("pythonw.exe")
 
 
@@ -108,6 +110,9 @@ def python_console() -> str:
 
 
 def script_path() -> str:
+    """Ce qui identifie l'installation : le script, ou le .exe autonome."""
+    if FROZEN:
+        return str(EXE_PATH)
     return str(APP_DIR / "torrent_uploader.py")
 
 
@@ -116,19 +121,33 @@ def host_script_path() -> str:
 
 
 def icon_path() -> str:
+    # .exe autonome : son icône est intégrée (ASSETS_DIR est un dossier temporaire)
+    if FROZEN:
+        return str(EXE_PATH)
     return str(ASSETS_DIR / "icon.ico")
 
 
 def commands() -> tuple[str, str]:
     """(commande fichier, commande URI). %L = nom long du fichier ; %1 = URI."""
+    if FROZEN:
+        exe = str(EXE_PATH)
+        return ('"%s" "%%L"' % exe, '"%s" "%%1"' % exe)
     pyw, script = python_launcher(), script_path()
     return ('"%s" "%s" "%%L"' % (pyw, script), '"%s" "%s" "%%1"' % (pyw, script))
 
 
 def _script_in_command(command) -> str:
-    """Chemin du script cité dans une commande enregistrée (2e élément entre guillemets)."""
-    parts = re.findall(r'"([^"]*)"', command or "")
-    return parts[1] if len(parts) >= 2 else ""
+    """Programme identifiant l'installation dans une commande enregistrée.
+
+    « "pythonw.exe" "script.py" "%L" » -> le script ; « "App.exe" "%L" » -> le .exe.
+    """
+    parts = [p for p in re.findall(r'"([^"]*)"', command or "") if not p.startswith("%")]
+    if len(parts) >= 2:
+        return parts[1]
+    if len(parts) == 1 and parts[0].lower().endswith(".exe") and \
+            not os.path.basename(parts[0]).lower().startswith("python"):
+        return parts[0]
+    return ""
 
 
 # --------------------------------------------------------------------------- #
@@ -337,7 +356,7 @@ def _host_manifest(bat: Path) -> dict:
     return {
         "name": HOST_NAME,
         "description": "Torrent Uploader - relais entre le navigateur et l'application",
-        "path": str(bat),
+        "path": str(EXE_PATH) if FROZEN else str(bat),
         "type": "stdio",
         "allowed_origins": ["chrome-extension://%s/" % ext for ext in EXTENSION_IDS],
     }
@@ -353,7 +372,13 @@ def register_native_host(roots=None) -> list[str]:
     """Écrit le manifeste de l'hôte natif et le déclare aux navigateurs installés."""
     _require_windows()
     manifest, bat = _host_files()
-    bat.write_text(_host_bat_content(), encoding="utf-8", newline="")
+    if FROZEN:                            # le .exe sert lui-même de relais
+        try:
+            bat.unlink()
+        except OSError:
+            pass
+    else:
+        bat.write_text(_host_bat_content(), encoding="utf-8", newline="")
     manifest.write_text(json.dumps(_host_manifest(bat), indent=2), encoding="utf-8")
     log = []
     for name, key in (_host_roots() if roots is None else roots):
@@ -387,7 +412,7 @@ def native_host_status(roots=None) -> dict:
     declared = [name for name, key in roots if _get(key) == str(manifest)]
     try:
         files_ok = (json.loads(manifest.read_text(encoding="utf-8")) == _host_manifest(bat)
-                    and bat.read_bytes() == _host_bat_content().encode("utf-8"))
+                    and (FROZEN or bat.read_bytes() == _host_bat_content().encode("utf-8")))
     except Exception:
         files_ok = False
     return {
@@ -517,7 +542,8 @@ def _has_subkeys(path: str) -> bool:
 def _is_our_command(command: str) -> bool:
     """La commande lance-t-elle CETTE application (quel que soit l'interpréteur) ?"""
     script = _script_in_command(command)
-    return bool(script) and os.path.basename(script).lower() == "torrent_uploader.py"
+    return bool(script) and os.path.basename(script).lower() in ("torrent_uploader.py",
+                                                                 "torrentuploader.exe")
 
 
 def status(classes: str = CLASSES, native_roots=None) -> dict:
@@ -620,7 +646,7 @@ def create_desktop_shortcut() -> Path:
         "$s = (New-Object -ComObject WScript.Shell).CreateShortcut(%s); "
         "$s.TargetPath = %s; $s.Arguments = %s; $s.WorkingDirectory = %s; "
         "$s.Description = %s; %s $s.Save()"
-        % (q(link), q(python_launcher()), q('"%s"' % script_path()), q(APP_DIR),
+        % (q(link), q(python_launcher()), q("" if FROZEN else '"%s"' % script_path()), q(APP_DIR),
            q("Envoyer des torrents vers la seedbox"),
            ("$s.IconLocation = %s;" % q(icon_path())) if Path(icon_path()).is_file() else "")
     )

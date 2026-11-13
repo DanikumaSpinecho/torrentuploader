@@ -45,12 +45,12 @@ Envoie vos fichiers .torrent et vos liens magnet vers une seedbox ruTorrent.
 
 Démarrage rapide
 ----------------
-1. Installez Python 3 depuis https://www.python.org/downloads/
-2. Copiez le dossier « Torrent Uploader » où vous voulez (par exemple dans Documents).
-3. Double-cliquez sur « Torrent Uploader.pyw » et renseignez votre seedbox.
-4. Bouton « Intégration » puis « Activer » : les .torrent et les liens magnet
-   s'ouvriront alors d'un clic.
-5. Facultatif, pour envoyer depuis Chrome ou Edge : chargez le dossier
+1. Copiez « TorrentUploader.exe » dans un dossier à lui (par exemple
+   Documents\\Torrent Uploader) et double-cliquez dessus : Python n'est pas nécessaire.
+   (Variante : le dossier « Torrent Uploader » contient la version Python.)
+2. Renseignez votre seedbox.
+3. Bouton « Intégration » puis « Activer » : les .torrent et les liens magnet
+   s'ouvriront alors d'un clic. Pour Chrome ou Edge : chargez ensuite le dossier
    « Extension Chrome » (Mode développeur > Charger l'extension non empaquetée).
 
 Tout est détaillé dans « Notice d'utilisation.pdf ».
@@ -87,6 +87,9 @@ def main() -> int:
     out.mkdir(parents=True)
 
     copy_tree(ROOT, out / "Torrent Uploader", APP_FILES)
+    exe = ROOT / "dist" / "TorrentUploader.exe"
+    if exe.is_file():                     # version autonome, sans Python
+        shutil.copy2(exe, out / "TorrentUploader.exe")
     copy_tree(Path(args.extension), out / "Extension Chrome", EXT_FILES)
 
     notice_dir = out / "Notice d'utilisation (HTML)"

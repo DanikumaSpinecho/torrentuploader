@@ -34,7 +34,13 @@ Les torrents peuvent arriver de trois façons :
 
 ## 1. Installation
 
-**Ce qu'il faut**
+**Le plus simple : l'exécutable autonome.** Téléchargez `TorrentUploader.exe` et l'archive de
+l'extension depuis la [dernière version publiée](https://github.com/DanikumaSpinecho/torrentuploader/releases/latest). Python n'est pas nécessaire : placez le
+`.exe` dans un dossier à lui (par exemple `Documents\Torrent Uploader`) et double-cliquez dessus. Ce
+même `.exe` sert aussi de relais à l'extension du navigateur. La suite de cette section concerne
+l'utilisation depuis les sources.
+
+**Ce qu'il faut (depuis les sources)**
 
 - Windows 10 ou 11.
 - **Python 3.8 ou plus récent**, installé depuis [python.org](https://www.python.org/downloads/).
@@ -58,7 +64,7 @@ Les torrents peuvent arriver de trois façons :
 
 ## 2. Premier lancement
 
-Double-cliquez sur **Torrent Uploader.pyw** (ou sur **Torrent Uploader.bat**). Au tout premier
+Double-cliquez sur **TorrentUploader.exe** — ou, depuis les sources, sur **Torrent Uploader.pyw** (ou **Torrent Uploader.bat**). Au tout premier
 lancement, la fenêtre des paramètres s'ouvre d'elle-même :
 
 ![Paramètres](docs/images/parametres.png)
@@ -315,6 +321,7 @@ l'extension, lui, n'est utilisable que par l'extension déclarée.
 ```bash
 python -m unittest discover -s tests -t .
 python tests/e2e/run_e2e.py --extension chrome-extension
+python tools/build_exe.py      # dist/TorrentUploader.exe (pip install pyinstaller)
 python tools/build_dist.py
 ```
 

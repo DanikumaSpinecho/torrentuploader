@@ -57,15 +57,23 @@ def write_message(stream, payload: dict) -> None:
 def launch_app() -> bool:
     """Démarre l'application, détachée du navigateur qui nous a lancés."""
     from . import winintegration as wi
-    try:
-        command = [wi.python_launcher(), wi.script_path()]
-    except Exception as exc:
-        log_error("hôte natif : interpréteur introuvable", exc)
-        return False
+    from .paths import EXE_PATH, FROZEN
+    env = None
+    if FROZEN:
+        command = [str(EXE_PATH)]
+        # nouvelle instance INDÉPENDANTE : sinon elle réutiliserait le dossier
+        # temporaire de l'hôte, effacé dès que celui-ci se termine
+        env = dict(os.environ, PYINSTALLER_RESET_ENVIRONMENT="1")
+    else:
+        try:
+            command = [wi.python_launcher(), wi.script_path()]
+        except Exception as exc:
+            log_error("hôte natif : interpréteur introuvable", exc)
+            return False
     detached = 0x00000008 | 0x00000200          # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
     breakaway = 0x01000000                       # CREATE_BREAKAWAY_FROM_JOB
     options = dict(stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                   stderr=subprocess.DEVNULL, close_fds=True)
+                   stderr=subprocess.DEVNULL, close_fds=True, env=env)
     # Le navigateur peut placer ses hôtes dans un « job » : on tente d'en sortir
     # pour que l'application survive à la fin de l'hôte, sinon on lance tel quel.
     for flags in ((detached | breakaway, detached) if os.name == "nt" else (0,)):

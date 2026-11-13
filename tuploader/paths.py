@@ -15,9 +15,15 @@ import time
 import traceback
 from pathlib import Path
 
-# Dossier qui contient torrent_uploader.py
-APP_DIR = Path(__file__).resolve().parent.parent
-ASSETS_DIR = Path(__file__).resolve().parent / "assets"
+# Exécutable autonome (PyInstaller) : le code et les images sont extraits dans un
+# dossier temporaire (sys._MEIPASS) ; c'est l'emplacement du .exe qui compte.
+FROZEN = bool(getattr(sys, "frozen", False))
+EXE_PATH = Path(sys.executable).resolve() if FROZEN else None
+
+# Dossier qui contient torrent_uploader.py (ou TorrentUploader.exe)
+APP_DIR = EXE_PATH.parent if FROZEN else Path(__file__).resolve().parent.parent
+ASSETS_DIR = (Path(getattr(sys, "_MEIPASS", "")) / "tuploader" / "assets" if FROZEN
+              else Path(__file__).resolve().parent / "assets")
 
 # Permet aux tests (et à un usage « portable ») de rediriger toutes les données.
 ENV_DATA_DIR = "TORRENT_UPLOADER_DATA_DIR"

@@ -198,6 +198,11 @@ def main(argv=None) -> int:
 
 def run() -> int:
     """Point d'entrée protégé : sous pythonw, un plantage serait invisible."""
+    # Le .exe autonome sert aussi d'hôte de messagerie native : le navigateur le
+    # lance avec l'origine de l'extension en argument.
+    if any(a.startswith("chrome-extension://") for a in sys.argv[1:]):
+        from .nativehost import main as host_main
+        return host_main()
     try:
         return main()
     except SystemExit:
